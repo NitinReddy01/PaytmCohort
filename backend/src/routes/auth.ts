@@ -3,6 +3,7 @@ import {z} from 'zod';
 import { User } from "../models/User";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { Account } from "../models/Account";
 
 export const authRouter = Router();
 
@@ -26,6 +27,10 @@ authRouter.post('/signup',async (req,res)=>{
         if(existingUser) return  res.status(409).json({message:"User already exists with the given email"});
         const hashedPasword = await bcrypt.hash(req.body.password,10);
         const user = await User.create({email:req.body.email,password:hashedPasword,firstname:req.body.firstname,lastname:req.body.lastname});
+        await Account.create({
+            userId:user._id,
+            balance:1+Math.random()*1000
+        })
         res.json({message:"User Created"});
     } catch (error) {
         console.log(error);
@@ -42,6 +47,8 @@ authRouter.post('/signin',async (req,res)=>{
     if(!match) return res.status(403).json({message:"Invalid Credentials"});
     const accessToken = jwt.sign({id:user._id},process.env.ACCESS_TOKEN_SECRET!,{expiresIn:'1d'});
     const refreshToken = jwt.sign({id:user._id},process.env.REFRESH_TOKEN_SECRET!,{expiresIn:'3d'});
+    user.refreshToken =refreshToken;
+    await user.save();
     res.cookie("jwt",refreshToken,{httpOnly:true,sameSite:'none',secure:true,maxAge:24 * 60 * 60 * 1000});
     res.json({accessToken,id:user._id});
 })

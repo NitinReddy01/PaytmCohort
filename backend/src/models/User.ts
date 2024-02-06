@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema({
         required:true,
         trim:true,
         maxLength:30
+    },
+    refreshToken:{
+        type:String
     }
 });
 

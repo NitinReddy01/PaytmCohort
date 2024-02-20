@@ -6,6 +6,6 @@ import { accountRouter } from "./account";
 export const router = Router();
 
 router.use('/auth',authRouter);
-router.use(verifyToken);
+// router.use(verifyToken);
 router.use('/users',userRouter);
 router.use('/account',accountRouter);

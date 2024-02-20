@@ -52,3 +52,19 @@ authRouter.post('/signin',async (req,res)=>{
     res.cookie("jwt",refreshToken,{httpOnly:true,sameSite:'none',secure:true,maxAge:24 * 60 * 60 * 1000});
     res.json({accessToken,id:user._id});
 })
+
+authRouter.get('/logout',async (req,res)=>{
+    const token = req.cookies?.jwt;
+    if(!token) return res.sendStatus(204);
+    const decode = jwt.decode(token) as jwt.JwtPayload;
+    const id = decode?.id;
+    const user = await User.findById(id);
+    if(!user){
+        res.clearCookie('jwt',{httpOnly:true,sameSite:'none',secure:true,maxAge:  24 * 60 * 60 * 1000});
+        return res.sendStatus(204);
+    }
+    user.refreshToken = '';
+    await user.save();
+    res.clearCookie('jwt',{httpOnly:true,sameSite:'none',secure:true,maxAge:24 * 60 * 60 * 1000});
+    res.sendStatus(204);
+})

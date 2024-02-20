@@ -41,7 +41,7 @@ userRouter.get("/allUsers", async (req, res) => {
         lastname:{
             "$regex":filter
         }
-    }]}).select("_id username firstname lastname");
-    res.json({users})
+    }]}).select("_id email firstname lastname");
+    res.json({users});
 })
 export default userRouter;

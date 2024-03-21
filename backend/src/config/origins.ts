@@ -1,3 +1,3 @@
-const origins = ['http://localhost:5173']
+const origins = ["http://localhost:5173"];
 
 export default origins;

@@ -5,7 +5,6 @@ import { useSearchParams } from "react-router-dom";
 function SendMoney() {
     const [amount,setAmount] = useState<string>("");
     const [searchParams] = useSearchParams();
-    const id = searchParams.get('id');
     const name = searchParams.get('name');
   return (
     <div className="p-2 h-screen bg-gray-200 flex justify-center items-center" >

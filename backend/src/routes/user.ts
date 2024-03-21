@@ -1,17 +1,18 @@
 import { Router } from "express";
 import { z } from "zod";
 import { User } from "../models/User";
-import bcrypt from 'bcrypt';;
+import bcrypt from "bcrypt";
+import { after } from "node:test";
 
 const userRouter = Router();
 
 const userUpdateBody = z.strictObject({
     firstname: z.string().optional(),
     lastname: z.string().optional(),
-    password: z.string().optional()
-})
+    password: z.string().optional(),
+});
 
-userRouter.put('/update/:userId', async (req, res) => {
+userRouter.put("/update/:userId", async (req, res) => {
     const { userId } = req.params;
     if (!userId) {
         return res.status(400).json({ message: "User ID required" });
@@ -22,8 +23,11 @@ userRouter.put('/update/:userId', async (req, res) => {
     }
     try {
         const hashedPasword = await bcrypt.hash(req.body.password, 10);
-        const user = await User.findByIdAndUpdate(userId, {...req.body,password:hashedPasword});
-        if(!user) return res.status(404).json({message:"No User Found"});
+        const user = await User.findByIdAndUpdate(userId, {
+            ...req.body,
+            password: hashedPasword,
+        });
+        if (!user) return res.status(404).json({ message: "No User Found" });
         res.status(201).json({ message: "Updated" });
     } catch (error) {
         console.log(error);
@@ -31,17 +35,24 @@ userRouter.put('/update/:userId', async (req, res) => {
     }
 });
 
+const a = "As";
+
 userRouter.get("/allUsers", async (req, res) => {
     const filter = req.query.filter || "";
-    const users = await User.find({$or:[{
-        firstname:{
-            "$regex":filter
-        }
-    },{
-        lastname:{
-            "$regex":filter
-        }
-    }]}).select("_id email firstname lastname");
-    res.json({users});
-})
+    const users = await User.find({
+        $or: [
+            {
+                firstname: {
+                    $regex: filter,
+                },
+            },
+            {
+                lastname: {
+                    $regex: filter,
+                },
+            },
+        ],
+    }).select("_id email firstname lastname");
+    res.json({ users });
+});
 export default userRouter;

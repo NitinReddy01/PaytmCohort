@@ -1,2 +1,2 @@
 #!/bin/sh
-cd backend && npm run format
+cd backend && npm run lint

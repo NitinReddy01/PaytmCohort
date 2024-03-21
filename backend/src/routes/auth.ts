@@ -19,7 +19,6 @@ const signinBody = z.strictObject({
     password: z.string(),
 });
 
-"asdsad"
 
 const a = [1];
 

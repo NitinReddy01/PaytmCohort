@@ -19,38 +19,40 @@ const signinBody = z.strictObject({
     password: z.string(),
 });
 
+const AbcE_A = [1];
+authRouter.post(
+    "/signup",
 
-const a = [1];
-
-authRouter.post("/signup", async (req, res) => {
-    try {
-        const { success } = signupBody.safeParse(req.body);
-        if (!success)
-            return res.status(400).json({ message: "Invalid Inputs" });
-        const existingUser = await User.findOne({
-            email: req.body.email,
-        });
-        if (existingUser)
-            return res.status(409).json({
-                message: "User already exists with the given email",
+    async (req, res) => {
+        try {
+            const { success } = signupBody.safeParse(req.body);
+            if (!success)
+                return res.status(400).json({ message: "Invalid Inputs" });
+            const existingUser = await User.findOne({
+                email: req.body.email,
             });
-        const hashedPasword = await bcrypt.hash(req.body.password, 10);
-        const user = await User.create({
-            email: req.body.email,
-            password: hashedPasword,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-        });
-        await Account.create({
-            userId: user._id,
-            balance: 1 + Math.random() * 1000,
-        });
-        res.json({ message: "User Created" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-});
+            if (existingUser)
+                return res.status(409).json({
+                    message: "User already exists with the given email",
+                });
+            const hashedPasword = await bcrypt.hash(req.body.password, 10);
+            const user = await User.create({
+                email: req.body.email,
+                password: hashedPasword,
+                firstname: req.body.firstname,
+                lastname: req.body.lastname,
+            });
+            await Account.create({
+                userId: user._id,
+                balance: 1 + Math.random() * 1000,
+            });
+            res.json({ message: "User Created" });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    },
+);
 
 authRouter.post("/signin", async (req, res) => {
     const { success } = signinBody.safeParse(req.body);

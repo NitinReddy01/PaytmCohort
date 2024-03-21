@@ -11,6 +11,7 @@ module.exports = {
         "prettier",
     ],
     rules: {
+        "camelcase": "error",
         indent: ["error", 4], // enforce consistent indentation
             quotes: ["error", "double"], // enforce the consistent use of double quotes
             semi: ["error", "always"], // require semicolons at the end of statements

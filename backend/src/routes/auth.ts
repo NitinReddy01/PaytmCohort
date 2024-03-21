@@ -19,6 +19,8 @@ const signinBody = z.strictObject({
     password: z.string(),
 });
 
+"asdsad"
+
 const a = [1];
 
 authRouter.post("/signup", async (req, res) => {

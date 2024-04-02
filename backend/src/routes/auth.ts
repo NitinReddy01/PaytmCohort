@@ -19,7 +19,6 @@ const signinBody = z.strictObject({
     password: z.string(),
 });
 
-const AbcE_A = [1];
 authRouter.post(
     "/signup",
 

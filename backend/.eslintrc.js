@@ -10,6 +10,7 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "prettier",
     ],
+    ignorePatterns: ["dist/"],
     rules: {
         "camelcase": "error",
         indent: ["error", 4], // enforce consistent indentation

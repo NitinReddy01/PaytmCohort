@@ -21,7 +21,7 @@ function useDebounce(filter:string,time:number){
 }
 
 function Users() {
-    const [users, setUsers] = useState<[{ _id: string, email: string, firstname: string, lastname: string }]>();
+    const [users, setUsers] = useState<[{ id: string, email: string, firstName: string, lastName: string }]>();
     const [filter, setFilter] = useState('');
     const navigate = useNavigate();
     const debouncedFilter = useDebounce(filter,500);
@@ -29,7 +29,6 @@ function Users() {
     useEffect(() => {
         const getData = async () => {
             let res = await axios.get('http://localhost:9000/api/users/allUsers?filter=' + debouncedFilter);
-            console.log(res);
             setUsers(res.data.users);
         }
         getData();
@@ -47,18 +46,18 @@ function Users() {
             <div>
                 {users && users.map((user) => {
                     return (
-                        <div key={user._id} className="mt-6" >
+                        <div key={user.id} className="mt-6" >
                             <div className="flex justify-between">
                                 <div className="flex text-2xl font-bold" >
                                     <div className="rounded-full border h-12 w-12 text-center bg-gray-200 mr-4 " >
-                                        {user.firstname[0]}
+                                        {user.firstName[0]}
                                     </div>
                                     <div>
-                                        {user.firstname + " " + user.lastname}
+                                        {user.firstName + " " + user.lastName}
                                     </div>
                                 </div>
                                 <div className="text-lg">
-                                    <Button onClick={()=>{navigate(`/send?id=${user._id}&name=${user.firstname}`)}} label={"Send money"} />
+                                    <Button onClick={()=>{navigate(`/send?id=${user.id}&name=${user.firstName}`)}} label={"Send money"} />
                                 </div>
                             </div>
                         </div>

@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import mongoose from "mongoose";
 
 const connectToDb = (): void => {
@@ -10,5 +11,7 @@ const connectToDb = (): void => {
             console.log(err);
         });
 };
+
+export const prisma = new PrismaClient();
 
 export default connectToDb;

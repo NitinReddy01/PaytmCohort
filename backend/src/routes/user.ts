@@ -1,8 +1,7 @@
+import bcrypt from "bcrypt";
 import { Router } from "express";
 import { z } from "zod";
-import { User } from "../models/User";
-import bcrypt from "bcrypt";
-import { after } from "node:test";
+import { prisma } from "../config/db";
 
 const userRouter = Router();
 
@@ -23,9 +22,20 @@ userRouter.put("/update/:userId", async (req, res) => {
     }
     try {
         const hashedPasword = await bcrypt.hash(req.body.password, 10);
-        const user = await User.findByIdAndUpdate(userId, {
-            ...req.body,
-            password: hashedPasword,
+        // const user = await User.findByIdAndUpdate(userId, {
+        //     ...req.body,
+        //     password: hashedPasword,
+        // });
+        const user = await prisma.user.update({
+            where: {
+                id: Number(userId),
+            },
+            data: {
+                password: hashedPasword,
+            },
+            select: {
+                id: true,
+            },
         });
         if (!user) return res.status(404).json({ message: "No User Found" });
         res.status(201).json({ message: "Updated" });
@@ -35,24 +45,43 @@ userRouter.put("/update/:userId", async (req, res) => {
     }
 });
 
-const a = "As";
-
 userRouter.get("/allUsers", async (req, res) => {
-    const filter = req.query.filter || "";
-    const users = await User.find({
-        $or: [
-            {
-                firstname: {
-                    $regex: filter,
+    const filter = (req.query.filter || "") as string;
+    // const users = await User.find({
+    //     $or: [
+    //         {
+    //             firstname: {
+    //                 $regex: filter,
+    //             },
+    //         },
+    //         {
+    //             lastname: {
+    //                 $regex: filter,
+    //             },
+    //         },
+    //     ],
+    // }).select("_id email firstname lastname");
+    const users = await prisma.user.findMany({
+        where: {
+            OR: [
+                {
+                    firstName: {
+                        contains: filter,
+                    },
                 },
-            },
-            {
-                lastname: {
-                    $regex: filter,
+                {
+                    lastName: {
+                        contains: filter,
+                    },
                 },
-            },
-        ],
-    }).select("_id email firstname lastname");
+            ],
+        },
+        select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+        },
+    });
     res.json({ users });
 });
 export default userRouter;
